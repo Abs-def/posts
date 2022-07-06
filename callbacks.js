@@ -17,11 +17,21 @@ function getPosts(){
     }, 1000);
 }
 
-function createPost(post, callback){
-    setTimeout(() => {
-       posts.push({...post, createdAt: new Date().getTime()});
-        callback();
-    }, 2000);
+function createPost(post){
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            posts.push({...post, createdAt: new Date().getTime()});
+            
+            let error = false;
+
+            if(!error){
+                resolve(posts);
+            }else {
+                reject();
+            }
+        }, 0);  
+    });
+
 }
 
 function create4thPost(post, callback1){
@@ -31,8 +41,91 @@ function create4thPost(post, callback1){
     }, 4000);
 }
 
+function deletePost(){
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            
+            if(posts.length > 0) {
+                posts.pop();
+                resolve();
+            }else {
+                reject('array is empty now');
+            }
+
+        }, 1000);
+    });
+}
+
+const user = {
+    name: 'yash',
+    lastActivityTime: '30 june 2022'
+};
+
+function updateLastActivityTime(){
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+             
+            user.lastActivityTime = new Date().getTime();
+            let error = false;
+
+            if(!error){
+                resolve(user.lastActivityTime);
+            }else {
+                reject();
+            }      
+
+        },1000);
+    });
+}
+
 getPosts();
 
-createPost({ title: 'post three', body: 'this is post three'}, getPosts);
+createPost({ title: 'post three', body: 'this is post three'})
+.then((fromResolve) => {
+    //console.log(fromResolve);
+    getPosts();
+    // deletePost().then(() => {
+    //     getPosts();
+    // })
+    // .catch(err => console.log(err));
 
-create4thPost({ title: 'post four', body: 'this is fourth post'}, getPosts);
+})
+.catch(function() {
+    console.log('Error: could not create post');
+});
+
+//create4thPost({ title: 'post four', body: 'this is fourth post'}, getPosts);
+
+// deletePost().then(getPosts).catch(function(fromReject){
+//     console.log(fromReject);
+// });
+
+
+
+// PROMISE.ALL
+// const promise1 = Promise.resolve('hello world');
+// const promise2 = 100;
+// const promise3 = new Promise((resolve, reject) =>
+//  setTimeout(resolve, 2000, 'Goodbye')
+// );
+
+// Promise.all([promise1, promise2, promise3])
+// .then(values =>
+//     console.log(values)
+// );
+
+Promise.all([createPost({ title: 'post four', body: 'this is post four'}), updateLastActivityTime()])
+.then(([fromCreatePost, fromUpdateLastActivityTime]) => {
+    console.log(fromCreatePost, fromUpdateLastActivityTime);
+    
+    deletePost().then(() => {
+        console.log(posts);
+    })
+})
+.catch(err => console.log(err));
+
+//console.log(user.lastActivityTime);
+//changes 
+
+
+
