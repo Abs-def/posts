@@ -27,19 +27,19 @@ function createPost(post){
             if(!error){
                 resolve(posts);
             }else {
-                reject();
+                reject('error: could not create post');
             }
-        }, 0);  
+        }, 1000);  
     });
 
 }
 
-function create4thPost(post, callback1){
-    setTimeout(() => {
-        posts.push({...post, createdAt: new Date().getTime()});
-        callback1();
-    }, 4000);
-}
+// function create4thPost(post, callback1){
+//     setTimeout(() => {
+//         posts.push({...post, createdAt: new Date().getTime()});
+//         callback1();
+//     }, 4000);
+// }
 
 function deletePost(){
     return new Promise((resolve, reject) => {
@@ -47,7 +47,7 @@ function deletePost(){
             
             if(posts.length > 0) {
                 posts.pop();
-                resolve();
+                resolve(posts);
             }else {
                 reject('array is empty now');
             }
@@ -80,19 +80,11 @@ function updateLastActivityTime(){
 
 getPosts();
 
-createPost({ title: 'post three', body: 'this is post three'})
-.then((fromResolve) => {
-    //console.log(fromResolve);
-    getPosts();
-    // deletePost().then(() => {
-    //     getPosts();
-    // })
-    // .catch(err => console.log(err));
-
-})
-.catch(function() {
-    console.log('Error: could not create post');
-});
+// createPost({ title: 'intermediate post', body: 'this is post intermediate post'})
+// .then()
+// .catch(function(fromReject) {
+//     console.log(fromReject);
+// });
 
 //create4thPost({ title: 'post four', body: 'this is fourth post'}, getPosts);
 
@@ -101,6 +93,26 @@ createPost({ title: 'post three', body: 'this is post three'})
 // });
 
 
+async function init(){
+    try{
+        let postCreation1 = await createPost({ title: 'post three', body: 'this is post three'});
+    
+        console.log(postCreation1);
+
+        let postCreation2 = await createPost({ title: 'post four', body: 'this is fourth post'});
+
+        console.log(postCreation2);
+
+        let allPostsAfterDeletion = await deletePost();
+
+        console.log(allPostsAfterDeletion);
+    } catch(err) {
+        console.log(err);
+    }  
+    
+}
+
+init();
 
 // PROMISE.ALL
 // const promise1 = Promise.resolve('hello world');
@@ -114,15 +126,15 @@ createPost({ title: 'post three', body: 'this is post three'})
 //     console.log(values)
 // );
 
-Promise.all([createPost({ title: 'post four', body: 'this is post four'}), updateLastActivityTime()])
-.then(([fromCreatePost, fromUpdateLastActivityTime]) => {
-    console.log(fromCreatePost, fromUpdateLastActivityTime);
+// Promise.all([createPost({ title: 'post four', body: 'this is post four'}), updateLastActivityTime()])
+// .then(([fromCreatePost, fromUpdateLastActivityTime]) => {
+//     console.log(fromCreatePost, fromUpdateLastActivityTime);
     
-    deletePost().then(() => {
-        console.log(posts);
-    })
-})
-.catch(err => console.log(err));
+//     deletePost().then((posts) => {
+//         console.log(posts);
+//     })
+// })
+// .catch(err => console.log(err));
 
 //console.log(user.lastActivityTime);
 //changes 
